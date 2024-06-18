@@ -5,8 +5,8 @@ import os
 import matplotlib.pyplot as plt
 import scipy.stats as stats
 
-def get_coord(fold):
-    df_info = pd.read_csv(os.path.join(fold,'site','sp.csv'))
+def get_coord(fold_of_snowpit):
+    df_info = pd.read_csv(os.path.join(fold_of_snowpit,'site','sp.csv'))
     lat = df_info['Latitude (° N)'].iloc[0]
     lon = df_info['Longitude (° E)'].iloc[0]
     return(lat,lon)
@@ -24,13 +24,13 @@ def set_height_as_index(df_density):
         df_density.index = (df_density.iloc[:,0]+df_density.iloc[:,1])/2
 
 
-def plot_sp(fold):
+def plot_sp(fold_of_snowpit):
 
     #### read data ###
-    df_strati = pd.read_csv(os.path.join(fold,'stratigraphy','sp.csv'))
-    df_density = pd.read_csv(os.path.join(fold,'density','sp.csv'))
-    df_ssa = pd.read_csv(os.path.join(fold,'iris','sp.csv'))
-    df_temp = pd.read_csv(os.path.join(fold,'temp','sp.csv'))
+    df_strati = pd.read_csv(os.path.join(fold_of_snowpit,'stratigraphy','sp.csv'))
+    df_density = pd.read_csv(os.path.join(fold_of_snowpit,'density','sp.csv'))
+    df_ssa = pd.read_csv(os.path.join(fold_of_snowpit,'iris','sp.csv'))
+    df_temp = pd.read_csv(os.path.join(fold_of_snowpit,'temp','sp.csv'))
     set_height_as_index(df_density)
     
     th_tot = max(max(df_strati.iloc[:,0]),max(df_ssa.iloc[:,0]),max(df_density.iloc[:,0]))
@@ -76,15 +76,15 @@ def plot_sp(fold):
     plt.show()
 
     
-def unwrapSnowpit(fold) :
+def unwrapSnowpit(fold_of_snowpit) :
 ### Cette fonction lit les données de snowpits dans 'fold' et renvoie 4 array avec les données de respecivement : Epaisseur, densité, ssa et température des couches.
-### Les couches sont déterminée selon la stratigraphie et l'éxistence ou non de mesure.
+### Les couches sont déterminée selon la stratigraphie et l'existence ou non de mesure dans la couche.
 
     
-    df_strati = pd.read_csv(os.path.join(fold,'stratigraphy','sp.csv'))
-    df_density = pd.read_csv(os.path.join(fold,'density','sp.csv'))
-    df_ssa = pd.read_csv(os.path.join(fold,'iris','sp.csv'))
-    df_temp =  pd.read_csv(os.path.join(fold,'temp','sp.csv'))
+    df_strati = pd.read_csv(os.path.join(fold_of_snowpit,'stratigraphy','sp.csv'))
+    df_density = pd.read_csv(os.path.join(fold_of_snowpit,'density','sp.csv'))
+    df_ssa = pd.read_csv(os.path.join(fold_of_snowpit,'iris','sp.csv'))
+    df_temp =  pd.read_csv(os.path.join(fold_of_snowpit,'temp','sp.csv'))
     
     n_layer = df_strati.shape[0]                                                #Get the numbers of layers
     layer_thickness = np.asarray(df_strati.iloc[:,-2])                          #Get the Thickness of each layer in cm
@@ -154,10 +154,10 @@ def unwrapSnowpit(fold) :
     return(layer_thickness,layer_density,layer_ssa,layer_temp)
 
 
-def unwrap_tsoil(fold): 
-    dats = glob.glob(fold+'/*')
-    df_info = pd.read_csv(os.path.join(fold,'site','sp.csv'))
-    df_temp = pd.read_csv(os.path.join(fold,'temp','sp.csv')).dropna()
+def unwrap_tsoil(fold_of_snowpit): 
+
+    df_info = pd.read_csv(os.path.join(fold_of_snowpit,'site','sp.csv'))
+    df_temp = pd.read_csv(os.path.join(fold_of_snowpit,'temp','sp.csv')).dropna()
 
     if np.isnan(df_info['Soil temperature (°C)'][0]) == True :
         t_soil = stats.linregress(df_temp['Height (cm)'][-3:],df_temp['Temperature (°C)'][-3:])[1]
